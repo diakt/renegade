@@ -18,9 +18,9 @@ https://docs.mapbox.com/api/maps/
 Allows developers to render vector tiles over satellite or navigation mapping layers.
 Open access with signin under 2500 requests a month, does not transition to pay without consent. 
 Google Maps API is similar, but is somewhat more predatory in terms of transition, also limited options
-An example mapbox render at postman can be found here:
+An example mapbox call and a built out example are provided below:
 https://www.postman.com/hannahapi/workspace/roadtrip/request/14728358-4da8131e-0935-4506-84c6-e1872bfa293f
-
+https://aegean.forensic-architecture.org/ 
 
 Geolocation through JS-native navigation handle
 Allows user to declare their position to locate nearest fire in their area.

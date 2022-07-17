@@ -188,6 +188,8 @@ InitialLongitude
 
 Think it would also be a good idea to just render fire perimeters if it is one close
 
-Yeah, so actually geometry is a really good idea. Data comes back in an object, but two arrays if geometry, second is just lat/long in geometry
+Yeah, so actually geometry envelope is a really good idea. Data comes back in an object, but two arrays attribute/geometry, second is just lat/long within
 
 So now I have set fireLocations, so that's excellent
+
+Honestly appears that it makes no difference.

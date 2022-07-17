@@ -10,6 +10,7 @@ function App() {
   //States
   const [lalo, setLalo] = useState(null);
   const [fireLoc, setFireLoc] = useState([])
+  const [firePerim, setFirePerim] = useState([])
 
   function getLalo() {
     if (navigator.geolocation) {
@@ -38,7 +39,17 @@ function App() {
     fetch(url)
         .then((result) => {return result.json()})
         .then((data) => {
-            setFireLoc(data.events)
+            setFireLoc(data)
+        })
+        .catch((err) => console.log(err))
+  }
+
+  function getFirePerim(){
+    const url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+    fetch(url)
+        .then((result) => {return result.json()})
+        .then((data) => {
+            setFirePerim(data)
         })
         .catch((err) => console.log(err))
   }
@@ -49,7 +60,8 @@ function App() {
   useEffect(()=> {
     getLalo()
     getFireLoc()
-    console.log(fireLoc)
+    getFirePerim()
+
   }, []);
 
   

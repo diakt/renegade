@@ -54,3 +54,31 @@ Component Hierarchy:
     <footer> 
     </footer>
 </App>
+
+
+
+Notes:
+Fires near city, rather than user location. 
+Easy to test rather than location
+
+express
+node
+mongo/mongoose
+
+
+project 3:
+Team project
+Stronger focus on API, or database, front end
+
+
+Project 4:
+Python django
+
+Jump off a cliff: 
+MVP first
+
+Map data is a lot, I think 
+Without building own API
+
+Just list by state
+

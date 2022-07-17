@@ -1,17 +1,16 @@
 import React from 'react';
 import { useState, useEffect} from 'react';
 
-function FireEvents(props) {
-    const [fires, setFires] = useState([])
+function FireLoc(props) {
+    const [fireLoc, setFireLoc] = useState([])
 
 
     useEffect(()=> {
-        const url = "https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires"
+        const url = "https://eonet.gsfc.nasa.https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Locations/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson/api/v3/events?category=wildfires"
         fetch(url)
-            // .then((result) => {return result.json()})
             .then((result) => {return result.json()})
             .then((data) => {
-                setFires(data.events)
+                setFireLoc(data.events)
             })
             .catch((err) => console.log(err))
 
@@ -25,7 +24,7 @@ function FireEvents(props) {
 
 
     return (
-        <ul className='fire-event-list'>
+        <ul className='current-fire-position-list'>
             {fires.map((incident)=>{
                 return(
                     <li className='fire-event'

@@ -201,3 +201,5 @@ Trying to go with right side map
 
 So there are callback options for markers.
 This is getting half decent tbh
+
+Also styling personal location marker vs active fire markers

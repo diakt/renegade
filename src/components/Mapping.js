@@ -29,26 +29,13 @@ function Mapping(props) {
         })
         .catch((err) => console.log(err))
     }
-    
-    const currentFireLocation = {
-        type:'FeatureCollection',
-        features: {fireLoc}
+    function getClosestFire(){
+            //so first, what are lat and long?
+            //one lat is 69 miles, minute is 1.15, second is 101 feet
+            //one long is 54.6 miles, minute is .91 miles, second is 80 feet
+
+
     }
-
-    const currentFireLocationStyle = {
-        id: 'point',
-        type: 'circle',
-        paint: {
-          'circle-radius': 1000,
-          'circle-color': 'red'
-        }
-    };
-
-    const currentFirePerim = {
-        type:'FeatureCollection',
-        features: {firePerim}
-    }
-
 
     useEffect(()=> {
         getFireLoc()
@@ -66,20 +53,45 @@ function Mapping(props) {
     }
     else {
         return (
-            <div className='mapbox-container'>
+            <div className='fires-container'>
+                <div className='left-box'>
+                    <h2 className = "left-section-title"> Local fires in your area:</h2>
+                    <ul className='left-box-ul'>
+                        <div className='fire-unit'>
+                            <h4 className = "fire-name"> Fire name</h4>
+                            <p className='fire-details'> 
+                                dingo
+                                dingo
+                                Dingo is 34 and has no home.
+
+                                sss
+                            </p>
+                           
+                        </div>
+                        <div className='fire-unit'>
+                            <h4 className = "fire-name"> Fire name</h4>
+                            <p> Detail:</p>
+                            <p> Detail:</p>
+                        </div>
+                        
+                    </ul>
+                </div>
                 <div className='mapbox-container-map'>
                     <Map
                         className="actual-map"
                         initialViewState={{
-                            latitude: props.lalo[0],
-                            longitude: props.lalo[1],
-                            zoom: 5
+                            // latitude: props.lalo[0],
+                            // longitude: props.lalo[1],
+                            latitude: 45.73094827741738,
+                            longitude: -121.52561932578715,
+                            
+                            // 45.73094827741738, -121.52561932578715
+                            zoom: 8
                         }}
                         
 
                         style={{
                             position: 'relative',
-                            width: .75 * window.innerWidth,
                             height: .75 * window.innerHeight,
                         }}
                         
@@ -103,9 +115,9 @@ function Mapping(props) {
 
 
 
-                    <Source id="current-fire-loc" type="geojson" data = {currentFireLocation}>
+                    {/* <Source id="current-fire-loc" type="geojson" data = {currentFireLocation}>
                         <Layer {...currentFireLocationStyle}/>
-                    </Source>
+                    </Source> */}
                     </Map>
                 </div>
 

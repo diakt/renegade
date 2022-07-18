@@ -1,7 +1,7 @@
 import './App.css';
 // import EONET from './components/EONET';
 import React, {useState, useEffect} from 'react';
-// import Mapping from './components/Mapping'
+import Mapping from './components/Mapping'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
@@ -9,8 +9,7 @@ function App() {
 
   //States
   const [lalo, setLalo] = useState(null);
-  const [fireLoc, setFireLoc] = useState([])
-  const [firePerim, setFirePerim] = useState([])
+  
 
   function getLalo() {
     if (navigator.geolocation) {
@@ -34,33 +33,13 @@ function App() {
     }
   }
 
-  function getFireLoc(){
-    const url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Locations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
-    fetch(url)
-        .then((result) => {return result.json()})
-        .then((data) => {
-            setFireLoc(data)
-        })
-        .catch((err) => console.log(err))
-  }
-
-  function getFirePerim(){
-    const url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
-    fetch(url)
-        .then((result) => {return result.json()})
-        .then((data) => {
-            setFirePerim(data)
-        })
-        .catch((err) => console.log(err))
-  }
+  
 
   
 
 
   useEffect(()=> {
     getLalo()
-    getFireLoc()
-    getFirePerim()
 
   }, []);
 
@@ -69,19 +48,18 @@ function App() {
 
   return (
     <div className="App">
-      <header className='header-container'>
+      <header>
         <Header />
       </header>
 
-      <main className='main-container'>
-        <p>{lalo}</p>
-        {/* <Mapping 
+      <main>
+        <Mapping 
         lalo = {lalo}
-        /> */}
+        />
         {/* <EONET /> */}
 
       </main>
-      <footer className = 'footer-container'>
+      <footer>
         <Footer />
       </footer>
 

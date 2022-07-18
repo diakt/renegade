@@ -193,3 +193,11 @@ Yeah, so actually geometry envelope is a really good idea. Data comes back in an
 So now I have set fireLocations, so that's excellent
 
 Honestly appears that it makes no difference.
+
+7/18
+
+Now have pointers up for fires, need to add keys
+Trying to go with right side map
+
+So there are callback options for markers.
+This is getting half decent tbh

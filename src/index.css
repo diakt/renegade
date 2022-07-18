@@ -12,96 +12,91 @@ body {
   border-style: solid;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+
+.App {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
 }
+
+header {
+  display: flex;
+  flex-direction: column;
+
+  background-color: peachpuff;
+  border: black;
+  border-style: solid;
+  min-width: 95vw;
+  margin-bottom: 3vh;
+}
+
 
 main {
   display:flex;
   flex-direction: column;
-  align-items: center;
-
-}
-
-
-
-.App {
-  display:flex;
-  flex-direction: column;
-  width: 100%;
+  justify-content: flex-end;
+  align-items: flex-end;
   
+
+  background-color: #28a9a9;
+
+
+
+  min-width: 95vw;
+  margin-bottom: 3vh;
+
 }
 
 
-
-.header-container {
+footer {
   display: flex;
   flex-direction: column;
 
   background-color: peachpuff;
   border: black;
   border-style: solid;
-  min-width: 80vw;
-
-
-}
-
-.main-container {
-  display: flex;
-  flex-direction: column;
-
-  background-color: teal;
-  border: black;
-  border-style: solid;
-  min-width: 80vw;
-
+  min-width: 95vw;
 }
 
 
-.footer-container {
-  display: flex;
-  flex-direction: column;
 
-  background-color: peachpuff;
-  border: black;
-  border-style: solid;
-  min-width: 80vw;
-}
+
+
 
 .mapbox-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: pink;
-  width: 90%;
-  border: black;
-  border-style: solid;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+
 
 }
 
-.mapbox-container-map {
+/* within mapbox container */
+.mapbox-container-map { 
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end !important;
+  height: 100% !important;
+  width: 100% !important;
 
-  width: 90%;
-  border: black;
+  margin: 0;
+  padding: 0;
+
+  border: white;
   border-style: solid;
 
-}
 
-.mapbox-container-text {
-  width: 90%;
-  border: black;
-  border-style: solid;
-
-  background-color: tan;
-}
-
-.mapbox-container-text-elt {
 
 }
+
+
+
+
+
 
 
 

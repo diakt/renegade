@@ -29,6 +29,7 @@ function Mapping(props) {
             .then((data) => {
                 // console.log(data.features)
                 setFireLoc(data.features)
+                console.log(data.features)
                 setReceived(true)
             })
             .catch((err) => console.log(err))
@@ -110,21 +111,13 @@ function Mapping(props) {
             <div className='fires-container'>
                 <div className='left-box'>
                     <h2 className="left-section-title"> Local fires hungry for your house:</h2>
-                    <div className='fire-unit'>
-                        <h4 className="fire-name"> Fire name</h4>
-                        <ul className='fire-details'>
-                            <li className='fire-detail'>Acres: </li>
-                            <li className='fire-detail'>Acreage: </li>
-                            <li className='fire-detail'>Acreage: </li>
-                            <li className='fire-detail'>Acreage: </li>
-                        </ul>
-                    </div>
                     {fires100.map((element) => {
                         return (
-                            <div className='fire-unit'>
-                                <h4 className="fire-name"> Fire name</h4>
+                            <div className='fire-unit' key = {element.attributes.OBJECTID}>
+                                <h4 className="fire-name"> {element.attributes.IncidentName}</h4>
                                 <ul className='fire-details'>
                                     <li className='fire-detail'>Miles from fire: {element.difference.toFixed(0)} </li>
+                                    <li className='fire-detail'>Discovered: {new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() +'/'+ new Date(element.attributes.FireDiscoveryDateTime).getDate().toString()} </li>
                                     
                                 </ul>
                             </div>
@@ -181,8 +174,6 @@ function Mapping(props) {
                                     color='red'
                                     scale={0.5}
                                     anchor="bottom" 
-                                    onHov
-                                    onmouseenter
                                     onClick={(event)=>{
                                         console.log(element);
                                         return (

@@ -269,3 +269,30 @@ Would be good to consider popups and cursor type on map
 But now have fires within 100 as well
 
 All good
+
+Okay. It looks like my times are vastly off. The discovery date, which I am assigning from FireDiscoveryDateTime, are all rendering as today, so no matter what I pass to Date, it still renders it as current time.
+
+YOu can go new Date, then tostring, I'm runnning with that
+
+I'm thinking it might be a better bet to go with the big set
+
+Incident Name  - .attributes.IncidentName
+Percent Contained - .attributes.PercentContained
+Number of personnel - .attributes.PercentPerimeterToBeContained
+FIre Complexity - .attributes.FireMgmtComplexity
+Fire Discovery Date Time - attributes.FireDiscoveryDateTime
+POO County (Point of Order) - .attributes.POOCounty
+
+
+
+
+Filters:
+Fire out is null - .attributes.FireOutDateTime is null
+INcident Type Category is not RX - .attributes.IncidentTypeCategory == "WF"
+unknown feature names:
+Incident Size over one acre - .attributes. (incident size) >=1
+
+After this, could search through RSS XML whatever inciweb for link by ID
+
+Type 5 to Type 1, 1 is big big
+ICS209 only kicks on ceratin stuff, there are categories

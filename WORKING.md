@@ -203,3 +203,69 @@ So there are callback options for markers.
 This is getting half decent tbh
 
 Also styling personal location marker vs active fire markers
+
+https://www.sco.wisc.edu/wp-content/uploads/2022/01/length-table1-1024x276.jpg
+So 1 degree is 69.4 miles for lat
+
+"Longitude is a little trickier. There are 180 degrees of longitude in each direction, east and west, from the Prime Meridian (which is at 0 degrees longitude). These measurements meet at the meridian located at 180 East and West. The number of degrees of longitude covered if we circumnavigated Earth around the Equator would therefore be 360.
+
+However, unlike latitude, lines of longitude converge at the poles, which means that the length of a degree of longitude is not constant. At the Equator, it will be 69.4 miles, just like latitude. But as you move north or south, the distance shrinks by a factor equal to the cosine of the latitude. Table 2 shows this relationship."
+
+So need to do some form of equivalence relation.
+
+Name it "dangerous.lighting"
+
+Documents for haversine, which measures geodist
+https://www.npmjs.com/package/haversine
+
+const haversine = require('haversine')
+
+const start = {
+  latitude: 30.849635,
+  longitude: -83.24559
+}
+
+const end = {
+  latitude: 27.950575,
+  longitude: -82.457178
+}
+
+console.log(haversine(start, end))
+console.log(haversine(start, end, {unit: 'mile'}))
+console.log(haversine(start, end, {unit: 'meter'}))
+console.log(haversine(start, end, {threshold: 1}))
+console.log(haversine(start, end, {threshold: 1, unit: 'mile'}))
+console.log(haversine(start, end, {threshold: 1, unit: 'meter'}))
+
+
+
+...
+Damn, I'm good. For hood river kicked on this:
+
+{"OBJECTID":267787,
+"RAILROAD TIE",
+{"x":-121.03341424879672,"y":45.662775641659131}}
+
+So my nearest wildfire locator is working.
+
+wild.
+
+7/19
+
+Today, need to print nearest fires.
+Also... let's get clickable onmarkers
+
+For printing, important features:
+"FireDiscoveryDateTime":1646700960000,
+
+So, now have clickable events console logging
+
+Parsing rss.....
+https://inciweb.nwcg.gov/feeds/rss/incidents/
+
+
+Would be good to consider popups and cursor type on map
+
+But now have fires within 100 as well
+
+All good

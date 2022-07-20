@@ -296,3 +296,62 @@ After this, could search through RSS XML whatever inciweb for link by ID
 
 Type 5 to Type 1, 1 is big big
 ICS209 only kicks on ceratin stuff, there are categories
+
+
+
+
+So the issue is that I'm seeing all of the wildfires now in either alaska, midwest, or arizona nevada area. I am trying to find a wildfire which has a flatout wrong lat/long, or I'm going to need to seriously reevaluate this data.
+
+Is it possible that it is so big that it's only loading by states? That's my guess
+Alaska..
+
+Alabama · Alaska · Arizona · Arkansas · California ; Indiana · Iowa · Kansas · Kentucky
+
+and I'm only seeing alaska arizona. hmm.
+
+My intuition...was correct. Funnily enough. The API will only provide 2k requests, on the nose. So I may now be rate limited to drawing a box and getting after it. This actually helps with mission creep.
+
+New plan: Modify api so I only get events within a 100mx100m box. Might be some issues with calculating then calling getFireLoc but 
+
+So....
+
+1) Extract lalo from user data
+2) Lalo gets passed to mapping
+3) Lalo is taken into some form of "setmapbounds"
+4) lalo is set as a state, that's probably a good idea.
+5) lalo is passed into getFireLoc
+6) We figure out how to query lat and long using `-strings
+7) We then only request specific points for within100 (maybe 99 so no overlap)
+7) We also pass lalo into the return, where we set map boundaries by calc NE SW
+
+Questions:
+How do we get a latlong, and get other latlongs based on mile distance?
+Maybe we could paint a circle? It could be enclosed within a square.
+Inverse haversine?
+
+Ouch. Inverse haversine is a pain in the ass.
+https://stackoverflow.com/questions/62366229/work-out-the-50-miles-radius-from-london-latitude-and-longitude-coordinates
+
+So the biggest problem is for sure calculating this 50mile box
+
+Let's leave it for now, call it a latlong box.
+
+But damn, that's a pretty cool problem.
+Oblate spheroid.
+
+showAccuracyCircle: boolean
+Default: true
+
+Draw a transparent circle will be drawn around the user location indicating the accuracy (95% confidence level) of the user's location. Set to false to disable. This only has effect if showUserLocation is true.
+
+Also, react can track user location, I should use that native method
+
+SO I am getting rabbitholed.
+I need to redo get Fire Loc based off of props. Even better, do it off of passed lat and long. That would be way, way better.
+
+I think it might be a good idea to rip some functions out of Mapping
+
+
+Ended the night with a good bit of hacking and slashing. Much cleaner now. Pedro would be proud.
+
+

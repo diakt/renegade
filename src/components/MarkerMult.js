@@ -16,7 +16,7 @@ function MarkerMult(props) {
                 props.setFooterText(
                     "The fire you have selected is titled the " + props.element.attributes.IncidentName + 
                     " Fire. It was discovered on " + new Date(props.element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(props.element.attributes.FireDiscoveryDateTime).getDate().toString() + 
-                    ". It is approximately " + (props.element.difference).toFixed(0) + " miles away from you."
+                    ", approximately " + (props.element.difference).toFixed(0) + " miles from you."
                     
                 ) }}
         />

@@ -26,13 +26,41 @@ body {
 header {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   top: 0;
   background-color: #996A84;
   border: black;
   border-style: solid;
   min-width: 95vw;
+  max-width: 95vw;
+  min-height: 8vh;
+  max-height: 8vh;
   margin-bottom: 2vh;
+
 }
+
+.header-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 29vw;
+  margin-left: 1.5vw;
+  padding: 0;
+  /* border: red;
+  border-style: dashed; */
+  
+}
+
+.site-title {
+  margin: 0px;
+  /* margin-left: */
+  padding: 0;
+  /* border: black;
+  border-style: dashed; */
+
+}
+
 
 
 main {
@@ -59,6 +87,8 @@ footer {
   border-style: solid;
   min-width: 95vw;
   max-width: 95vw;
+  min-height: 8vh;
+  max-height: 8vh;
   overflow-y:auto;
 }
 

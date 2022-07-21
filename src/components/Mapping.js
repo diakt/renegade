@@ -6,17 +6,19 @@ import haversine from 'haversine';
 import MarkerMult from './MarkerMult'
 import FooterElt from './FooterElt';
 
-function Mapping(props) {
+
+function Mapping() {
 
     //states
     const [userLatLong, setuserLatLong] = useState(null);
-    const [time, setTime] = useState(Date.now() - 2629743)
+    const [fireData, setfireData] = useState([])
+    const [sortedFireData, setSortedFireData] = useState([])
+    const [footerText, setFooterText] = useState("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.")
+
+
     const [hoodRiverLatLong, setHoodRiverLatLong] = useState([45.73094827741738, -121.52561932578715])
     const [coconinoLatLong, setCoconinoLatLong] = useState([35.27, -111.666])
-    const [fireData, setfireData] = useState([])
-
-    const [sortedFireData, setSortedFireData] = useState([])
-    const [footerText, setFooterText] = useState("Select a fire to see more.")
+    
 
     //functions
     function getuserLatLong() {
@@ -71,15 +73,22 @@ function Mapping(props) {
     function getFireData(latitude, longitude) {
 
 
-        const url = setQuery(coconinoLatLong[0], coconinoLatLong[1], 2)
+        const url = setQuery(latitude, longitude, 2)
         fetch(url)
             .then((result) => { return result.json() })
             .then((data) => {
-                console.log(data)
-
+                console.log(data.features)
+                
+                console.log((data.features).filter(element =>
+                    ((element.attributes.DailyAcres > .1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
+                    || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
+                    || ((element.attributes.CalculatedAcres != null && element.attributes.DailyAcres > 1))
+                ))
                 setfireData((data.features).filter(element =>
-                    (element.attributes.DailyAcres > 5 || element.attributes.FireDiscoveryDateTime > 1651370102)
-
+                    ((element.attributes.CalculatedAcres != null))
+                    || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
+                    || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
+                    
                 ))
 
             })
@@ -94,7 +103,6 @@ function Mapping(props) {
         }
         const sortedFireData = [];
         let difference = null;
-
         fireData.forEach((element) => {
 
             difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
@@ -116,6 +124,10 @@ function Mapping(props) {
             }
             else if (element.attributes.CalculatedAcres > 10000 && element.attributes.CalculatedAcres < 100000) {
                 element['sizeColor'] = "red"
+            }
+            if(element.attributes.IncidentName === "Turkey Hills"){
+                element['sizeColor'] = "purple"
+                console.log(element)
             }
 
 
@@ -141,11 +153,13 @@ function Mapping(props) {
     //chains after we get userlocation
     useEffect(() => {
         if (!userLatLong) {
-            console.log("Waiting...")
+            
+           
         }
         else {
             //dead lead so can test HR
-            getFireData(userLatLong[0], userLatLong[1])
+             setFooterText("Select a fire to see more.")
+            getFireData(coconinoLatLong[0], coconinoLatLong[1])
 
         }
     }, [userLatLong]);
@@ -162,8 +176,9 @@ function Mapping(props) {
         <div>
             <main>
                 <div className='fires-container'>
+                    
                     <div className='left-box'>
-                        <h2 className="left-section-title"> Local fires hot for your house:</h2>
+                        <h3 className="left-section-title"> Local fires:</h3>
                         {sortedFireData.map((element) => {
                             return (
                                 <FireUnit
@@ -175,7 +190,7 @@ function Mapping(props) {
                     <div className='mapbox-container-map'>
                         <Map
                             className="actual-map"
-                            initialViewState={{ latitude: coconinoLatLong[0], longitude: coconinoLatLong[1], zoom: 10 }}
+                            initialViewState={{ latitude: coconinoLatLong[0], longitude: coconinoLatLong[1], zoom: 8 }}
                             trackUserLocation={true}
                             showAccuracyCircle={true}
                             showUserHeading={true}
@@ -204,8 +219,10 @@ function Mapping(props) {
                                 anchor="bottom"
                             />
                             {sortedFireData.map((element) => {
+                                
                                 return (
                                     <MarkerMult
+                                        key = {element.attributes.OBJECTID}
                                         element={element}
                                         setFooterText={setFooterText}
                                     />

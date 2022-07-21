@@ -2,7 +2,7 @@ import './App.css';
 // import EONET from './components/EONET';
 import React from 'react';
 import Mapping from './components/Mapping'
-import Header from './components/Header'
+import HeaderElt from './components/HeaderElt'
 import Footer from './components/FooterElt'
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
     <div className="App">
 
       <header>
-        <Header />
+        <HeaderElt />
       </header>
 
       

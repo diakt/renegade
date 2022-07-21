@@ -422,3 +422,24 @@ A writeup page (perhaps using router)
 Code cleaning ( a lot)
 
 I'm going to commit.
+
+Notice that we still do not have most of this running on location.
+It might be a good idea to have several buttons/options for relevant locations.
+
+
+
+7/21
+
+Back again, back again, jiggity jig.
+
+Need to redo colors by daily/initial/IA acres
+And add initial attack
+
+Working on lat long form, good play but let's keep working on MVP on elements
+
+Explanation page
+Top nav
+Accessibility
+
+
+Some fires hide, much ado about nothing

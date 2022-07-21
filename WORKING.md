@@ -355,3 +355,58 @@ I think it might be a good idea to rip some functions out of Mapping
 Ended the night with a good bit of hacking and slashing. Much cleaner now. Pedro would be proud.
 
 
+7/20
+
+Yeah, so this shit is difficult, but looking for a bounding box.
+That's the key term.
+
+Damn.
+So they do do all objectids but fuck me.
+
+
+So now have a working box.
+It loads fires within the area.
+Ripping out geolocate control.
+
+const geolocateControlRef = useCallback((ref) => {
+        if (ref) {
+            // Activate as soon as the control is loaded
+            ref.trigger();
+        }
+    }, []);
+
+
+To do:
+1) Generate SW NE objects to box map in
+2) Create other functional component with the left map box stuff
+- Or possibly have it change its color when you click on it?
+- That would be cash
+3) Include donation link to the Wildland Firefighter Foundation
+
+
+It's actually working pretty well. The sizing stuff is mint tbh
+Going to ake a break and then we need to find some big asl fires to check coloring
+
+
+One of the issues is figuring out which acreage to use
+
+Now have filtered out any elements with fireoutdatetime nonnull
+Now let's figure out acreage
+Almost none of them have calculated acres. Hmmmmm.
+
+Almost all of them have dailyacres. Interesting.
+And discoveryacres as well. 
+The vast majority have both discover acres and discovery acres.
+The ones that only have one have DiscoveryAcres, only one just has daily
+Have clicked event render in footer
+
+So time is actually quite difficult to do.
+
+Live vs in place filters
+
+
+
+
+
+
+

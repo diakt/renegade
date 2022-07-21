@@ -37,30 +37,3 @@ https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-current-wildland-fire
 Wrappers:
 React Mapbox GL
 
-7/20
-
-Yeah, so this shit is difficult, but looking for a bounding box.
-That's the key term.
-
-Damn.
-So they do do all objectids but fuck me.
-
-
-So now have a working box.
-It loads fires within the area.
-Ripping out geolocate control.
-
-const geolocateControlRef = useCallback((ref) => {
-        if (ref) {
-            // Activate as soon as the control is loaded
-            ref.trigger();
-        }
-    }, []);
-
-
-To do:
-1) Generate SW NE objects to box map in
-2) Create other functional component with the left map box stuff
-- Or possibly have it change its color when you click on it?
-- That would be cash
-3) Include donation link to the Wildland Firefighter Foundation

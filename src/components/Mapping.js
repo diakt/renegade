@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react'
-
-import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl'
+import FireUnit from './FireUnit';
+import Map, {Marker, NavigationControl, GeolocateControl } from 'react-map-gl'
 import haversine from 'haversine';
+import MarkerMult from './MarkerMult'
 
 function Mapping(props) {
     
@@ -19,7 +20,6 @@ function Mapping(props) {
             navigator.geolocation.getCurrentPosition(
                 function (position) {
                     setuserLatLong([position.coords.latitude, position.coords.longitude])
-                    console.log(position.coords.latitude, position.coords.longitude, " are our coord")
                 },
                 function () {
                     console.log("Browser had support but failed to retrieve");
@@ -32,6 +32,9 @@ function Mapping(props) {
     }
 
     const setQuery = (latitude, longitude, areaSizeParameter) => {
+            //As has a 2k req cap, this is a live filter
+
+
             //latitude is 0 to +-45, defines y coordinate
             //longitude is -90 to 90, defines x coordinate
             //in western hemisphere, increasing magnitude of neg goes west
@@ -41,6 +44,13 @@ function Mapping(props) {
             const xmax = longitude + areaSizeParameter
             const ymax = latitude + areaSizeParameter/2
 
+            const currentTime = Date.now()
+            console.log("Date is " + currentTime)
+            //todo
+            //need to filter out:
+            //fireoutdatetime is not null
+            //all controlled from a month ago+
+            
 
             const baseUrl = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+-122%2C+ymin%3A+45%2C+xmax%3A+-121%2C+ymax%3A+46%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token="
             const finalURL = `https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+${xmin}%2C+ymin%3A+${ymin}%2C+xmax%3A+${xmax}%2C+ymax%3A+${ymax}%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=`
@@ -55,15 +65,16 @@ function Mapping(props) {
 
     //user coordinate are passing well into here with current structure
     function getFireData(latitude, longitude) {
-        console.log("Coordinates passed into getFire data are", latitude, longitude)
-        const dingo = setQuery(hoodRiverLatLong[0], hoodRiverLatLong[1], 1)
-        console.log("dingo is", dingo)
-        const url = setQuery(hoodRiverLatLong[0], hoodRiverLatLong[1], 1)
+
+
+        const url = setQuery(hoodRiverLatLong[0], hoodRiverLatLong[1], 10)
         fetch(url)
             .then((result) => { return result.json() })
             .then((data) => {
                 console.log(data)
-                setfireData(data.features)
+                setfireData((data.features).filter(element=>
+                    element.attributes.FireOutDateTime !== null
+                ))
 
             })
             .catch((err) => console.log(err))
@@ -82,6 +93,24 @@ function Mapping(props) {
             //if distance between fire and point is least so far, new closest
             difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
             element['difference'] = difference
+            if (element.attributes.CalculatedAcres == null){
+                element['sizeColor'] = "grey"
+            }
+            else if (element.attributes.CalculatedAcres > 0 && element.attributes.CalculatedAcres < 10 ){
+                element['sizeColor'] = "green"
+            }
+            else if ((element.attributes.CalculatedAcres > 10 && element.attributes.CalculatedAcres < 100) || element.attributes.FireMgmtComplexity !== null){
+                element['sizeColor'] = "yellow"
+            }
+            else if (element.attributes.CalculatedAcres > 100 && element.attributes.CalculatedAcres < 1000){
+                element['sizeColor'] = "orange"
+            }
+            else {
+                element['sizeColor'] = "red"
+            }
+            if (element.attributes.DiscoveryAcres !== null){element['sizeColor'] = 'blue'}
+            if (element.attributes.DailyAcres !== null){element['sizeColor'] = 'red'}
+            if (element.attributes.DiscoveryAcres !== null && element.attributes.DailyAcres!== null){element['sizeColor'] = 'purple'}
             sortedFireData.push(element)
         })
         sortedFireData.sort((e1, e2) => e1.difference - e2.difference)
@@ -126,16 +155,10 @@ function Mapping(props) {
             <div className='left-box'>
                 <h2 className="left-section-title"> Local fires hungry for your house:</h2>
                 {sortedFireData.map((element) => {
-
                     return (
-                        <div className='fire-unit' key={element.attributes.OBJECTID}>
-                            <h4 className="fire-name"> {element.attributes.IncidentName}</h4>
-                            <ul className='fire-details'>
-                                <li className='fire-detail'>Miles from fire: {element.difference.toFixed(0)} </li>
-                                <li className='fire-detail'>Discovered: {new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString()} </li>
-
-                            </ul>
-                        </div>
+                        <FireUnit 
+                        key={element.attributes.OBJECTID}
+                        element = {element}/>
                     )
                 })}
             </div>
@@ -168,16 +191,10 @@ function Mapping(props) {
                         anchor="bottom"
                     />
 
-                    {fireData.map((element) => {
+                    {sortedFireData.map((element) => {
                         return (
-                            <Marker
-                                longitude={element.geometry.x}
-                                latitude={element.geometry.y}
-                                key={element.attributes.OBJECTID}
-                                color='red'
-                                scale={0.5}
-                                anchor="bottom"
-                                onClick={(event) => { console.log(element); }}
+                            <MarkerMult 
+                            element={element}
                             />
                         )
                     })}

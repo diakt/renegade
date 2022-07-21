@@ -1,20 +1,21 @@
-import React from 'react';
-import { useState, useEffect, useCallback } from 'react'
+import React, {useState, useEffect} from 'react';
 import FireUnit from './FireUnit';
 import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl'
 import haversine from 'haversine';
 import MarkerMult from './MarkerMult'
 import FooterElt from './FooterElt';
+import LocForm from './LocForm';
 
 
 function Mapping() {
 
     //states
-    const [userLatLong, setuserLatLong] = useState(null);
-    const [fireData, setfireData] = useState([])
+    const [userLatLong, setUserLatLong] = useState([]);
+    const [fireData, setFireData] = useState([])
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.")
 
+    const [displayType, setDisplayType] = useState("coconino")
 
     const [hoodRiverLatLong, setHoodRiverLatLong] = useState([45.73094827741738, -121.52561932578715])
     const [coconinoLatLong, setCoconinoLatLong] = useState([35.27, -111.666])
@@ -25,7 +26,8 @@ function Mapping() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    setuserLatLong([position.coords.latitude, position.coords.longitude])
+                    console.log(position.coords.latitude, position.coords.longitude)
+                    setUserLatLong([position.coords.latitude, position.coords.longitude])
                 },
                 function () {
                     console.log("Browser had support but failed to retrieve");
@@ -39,23 +41,18 @@ function Mapping() {
 
     const setQuery = (latitude, longitude, areaSizeParameter) => {
         //As has a 2k req cap, this is a live filter
-
-
+        console.log(latitude, longitude, areaSizeParameter)
+        //45.73094827741738, -121.52561932578715
         //latitude is 0 to +-45, defines y coordinate
         //longitude is -90 to 90, defines x coordinate
         //in western hemisphere, increasing magnitude of neg goes west
 
-        const xmin = longitude - areaSizeParameter
-        const ymin = latitude - areaSizeParameter / 2
-        const xmax = longitude + areaSizeParameter
-        const ymax = latitude + areaSizeParameter / 2
-
-        // const currentTime = Date.now()
-        // console.log("Date is " + currentTime)
-        //todo
-        //need to filter out:
-        //fireoutdatetime is not null
-        //all controlled from a month ago+
+        const xmin = Number(longitude) - Number(areaSizeParameter) 
+        const ymin = Number(latitude) - Number(areaSizeParameter)/2
+        const xmax = Number(longitude) + Number(areaSizeParameter)
+        const ymax = Number(latitude) + Number(areaSizeParameter)/2
+        console.log(xmin, xmax, ymin, ymax)
+     
 
 
         const baseUrl = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+-122%2C+ymin%3A+45%2C+xmax%3A+-121%2C+ymax%3A+46%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token="
@@ -73,23 +70,25 @@ function Mapping() {
     function getFireData(latitude, longitude) {
 
 
-        const url = setQuery(latitude, longitude, 2)
+        const url = setQuery(latitude, longitude, 3)
         fetch(url)
             .then((result) => { return result.json() })
             .then((data) => {
-                console.log(data.features)
                 
-                console.log((data.features).filter(element =>
-                    ((element.attributes.DailyAcres > .1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
-                    || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
-                    || ((element.attributes.CalculatedAcres != null && element.attributes.DailyAcres > 1))
-                ))
-                setfireData((data.features).filter(element =>
-                    ((element.attributes.CalculatedAcres != null))
-                    || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
-                    || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
+                // console.log(data.features)
+                console.log(data.features)
+                setFireData(data.features)
+                // console.log((data.features).filter(element =>
+                //     ((element.attributes.DailyAcres > .1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
+                //     || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
+                //     || ((element.attributes.CalculatedAcres != null && element.attributes.DailyAcres > 1))
+                // ))
+                // setFireData((data.features).filter(element =>
+                //     ((element.attributes.CalculatedAcres != null))
+                //     || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
+                //     || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
                     
-                ))
+                // ))
 
             })
             .catch((err) => console.log(err))
@@ -98,8 +97,8 @@ function Mapping() {
     const orderFiresByDistance = () => {
 
         const user_location = {
-            latitude: coconinoLatLong[0], //userLatLong[0]
-            longitude: coconinoLatLong[1] //userLatLong[1]
+            latitude: userLatLong[0], //userLatLong[0]
+            longitude: userLatLong[1] //userLatLong[1]
         }
         const sortedFireData = [];
         let difference = null;
@@ -138,8 +137,7 @@ function Mapping() {
     }
 
 
-
-
+    
 
 
     //side effects
@@ -152,23 +150,25 @@ function Mapping() {
 
     //chains after we get userlocation
     useEffect(() => {
+        console.log("userLatLong changed")
+        console.log(userLatLong)
         if (!userLatLong) {
-            
-           
         }
         else {
-            //dead lead so can test HR
-             setFooterText("Select a fire to see more.")
-            getFireData(coconinoLatLong[0], coconinoLatLong[1])
-
+            setFooterText("Select a fire to see more.")
+            getFireData(userLatLong[0], userLatLong[1])
         }
     }, [userLatLong]);
 
     //chains after we get firedata
-    useEffect(() => {
-        orderFiresByDistance()
+    // useEffect(() => {
+    //     orderFiresByDistance()
 
-    }, [fireData]);
+    // }, [fireData]);
+
+    setTimeout(() => {
+        orderFiresByDistance()
+    }, 100);
 
 
 
@@ -176,8 +176,13 @@ function Mapping() {
         <div>
             <main>
                 <div className='fires-container'>
-                    
                     <div className='left-box'>
+                        <h3 className="left-section-title"> Set location:</h3>
+                        <LocForm
+                        setUserLatLong = {setUserLatLong}
+                        setFireData = {setFireData}
+                        setSortedFireData = {setSortedFireData}
+                        />
                         <h3 className="left-section-title"> Local fires:</h3>
                         {sortedFireData.map((element) => {
                             return (
@@ -190,7 +195,7 @@ function Mapping() {
                     <div className='mapbox-container-map'>
                         <Map
                             className="actual-map"
-                            initialViewState={{ latitude: coconinoLatLong[0], longitude: coconinoLatLong[1], zoom: 8 }}
+                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
                             trackUserLocation={true}
                             showAccuracyCircle={true}
                             showUserHeading={true}
@@ -200,13 +205,16 @@ function Mapping() {
                             onStyleLoad={(map) => map.resize()}
                         >
                             <NavigationControl showZoom={true} showCompass={false} />
-                            <GeolocateControl />
+                            <GeolocateControl
+                            fitBoundsOptions={{maxZoom: 8} }
+                            />
                             {/* Markers for location points */}
+                            
                             <Marker
                                 // latitude={props.userLatLong[0]} longitude={props.userLatLong[1]}
                                 latitude={hoodRiverLatLong[0]}
                                 longitude={hoodRiverLatLong[1]}
-                                key="personal"
+                                key="hoodriver"
                                 scale={0.5}
                                 anchor="bottom"
                             />
@@ -218,6 +226,7 @@ function Mapping() {
                                 scale={0.5}
                                 anchor="bottom"
                             />
+                           
                             {sortedFireData.map((element) => {
                                 
                                 return (

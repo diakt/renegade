@@ -58,6 +58,8 @@ footer {
   border: black;
   border-style: solid;
   min-width: 95vw;
+  max-width: 95vw;
+  overflow-y:auto;
 }
 
 

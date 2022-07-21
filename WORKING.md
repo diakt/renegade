@@ -404,9 +404,21 @@ So time is actually quite difficult to do.
 
 Live vs in place filters
 
+Niggling problems:
+Name below can be screaming snake
 
 
 
+Could throw a lat, long, size search
+Or a click on box to see location thingie
 
+Alright. We now have printing lower, have filtered some minor elements, and actually have a pretty complete product.
 
+Still need to have viewpoint limited, a message if location is not displayed, and a top header, but not terrible problems to have. And a message for if there are no wildfires, keeping it cheeky.
 
+Lets say deadline on creation is tomorrow midday.
+I still need to do:
+A writeup page (perhaps using router)
+Code cleaning ( a lot)
+
+I'm going to commit.

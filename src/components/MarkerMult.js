@@ -2,6 +2,7 @@ import React from 'react';
 import { Marker } from 'react-map-gl';
 
 function MarkerMult(props) {
+
     return (
         <Marker
             longitude={props.element.geometry.x}
@@ -10,7 +11,14 @@ function MarkerMult(props) {
             color={props.element.sizeColor}
             scale={0.5}
             anchor="bottom"
-            onClick={(event) => { console.log(props.element); }}
+            onClick={(event) => { 
+                console.log(props.element);
+                props.setFooterText(
+                    "The fire you have selected is titled the " + props.element.attributes.IncidentName + 
+                    " Fire. It was discovered on " + new Date(props.element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(props.element.attributes.FireDiscoveryDateTime).getDate().toString() + 
+                    ". It is approximately " + (props.element.difference).toFixed(0) + " miles away from you."
+                    
+                ) }}
         />
     );
 }

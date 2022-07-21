@@ -1,11 +1,11 @@
 import React from 'react';
 
-function Footer(props) {
+function FooterElt(props) {
     return (
         <nav className='footer'>
-            <p>Bottom Nav will go here</p>
+            <p>{props.footerText}</p>
         </nav>
     );
 }
 
-export default Footer;
+export default FooterElt;

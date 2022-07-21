@@ -1,10 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect} from 'react';
 import FireUnit from './FireUnit';
-import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl'
+import Map, {NavigationControl, GeolocateControl } from 'react-map-gl'
+
 import haversine from 'haversine';
 import MarkerMult from './MarkerMult'
 import FooterElt from './FooterElt';
 import LocForm from './LocForm';
+
 
 
 function Mapping() {
@@ -15,11 +17,11 @@ function Mapping() {
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.")
 
-    const [displayType, setDisplayType] = useState("coconino")
+    //[45.73094827741738, -121.52561932578715])
+    //[35.27, -111.666])
 
-    const [hoodRiverLatLong, setHoodRiverLatLong] = useState([45.73094827741738, -121.52561932578715])
-    const [coconinoLatLong, setCoconinoLatLong] = useState([35.27, -111.666])
     
+
 
     //functions
     function getuserLatLong() {
@@ -47,15 +49,15 @@ function Mapping() {
         //longitude is -90 to 90, defines x coordinate
         //in western hemisphere, increasing magnitude of neg goes west
 
-        const xmin = Number(longitude) - Number(areaSizeParameter) 
-        const ymin = Number(latitude) - Number(areaSizeParameter)/2
+        const xmin = Number(longitude) - Number(areaSizeParameter)
+        const ymin = Number(latitude) - Number(areaSizeParameter) / 2
         const xmax = Number(longitude) + Number(areaSizeParameter)
-        const ymax = Number(latitude) + Number(areaSizeParameter)/2
+        const ymax = Number(latitude) + Number(areaSizeParameter) / 2
         console.log(xmin, xmax, ymin, ymax)
-     
 
 
-        const baseUrl = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+-122%2C+ymin%3A+45%2C+xmax%3A+-121%2C+ymax%3A+46%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token="
+
+        
         const finalURL = `https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+${xmin}%2C+ymin%3A+${ymin}%2C+xmax%3A+${xmax}%2C+ymax%3A+${ymax}%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=`
         return finalURL
     }
@@ -74,7 +76,7 @@ function Mapping() {
         fetch(url)
             .then((result) => { return result.json() })
             .then((data) => {
-                
+
                 // console.log(data.features)
                 console.log(data.features)
                 setFireData(data.features)
@@ -87,7 +89,7 @@ function Mapping() {
                 //     ((element.attributes.CalculatedAcres != null))
                 //     || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
                 //     || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
-                    
+
                 // ))
 
             })
@@ -124,7 +126,7 @@ function Mapping() {
             else if (element.attributes.CalculatedAcres > 10000 && element.attributes.CalculatedAcres < 100000) {
                 element['sizeColor'] = "red"
             }
-            if(element.attributes.IncidentName === "Turkey Hills"){
+            if (element.attributes.IncidentName === "Turkey Hills") {
                 element['sizeColor'] = "purple"
                 console.log(element)
             }
@@ -137,7 +139,13 @@ function Mapping() {
     }
 
 
-    
+    // const goTo = () => {
+    //     const {current: map} = useMap();
+
+    //     const onDblClick = () => {
+    //         map.flyTo({center: [userLatLong[0], userLatLong[1]]});
+    //     };
+    // }
 
 
     //side effects
@@ -179,9 +187,9 @@ function Mapping() {
                     <div className='left-box'>
                         <h3 className="left-section-title"> Set location:</h3>
                         <LocForm
-                        setUserLatLong = {setUserLatLong}
-                        setFireData = {setFireData}
-                        setSortedFireData = {setSortedFireData}
+                            setUserLatLong={setUserLatLong}
+                            setFireData={setFireData}
+                            setSortedFireData={setSortedFireData}
                         />
                         <h3 className="left-section-title"> Local fires:</h3>
                         {sortedFireData.map((element) => {
@@ -194,6 +202,7 @@ function Mapping() {
                     </div>
                     <div className='mapbox-container-map'>
                         <Map
+
                             className="actual-map"
                             initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
                             trackUserLocation={true}
@@ -202,15 +211,17 @@ function Mapping() {
                             style={{ position: 'relative', height: .75 * window.innerHeight }}
                             mapStyle="mapbox://styles/mapbox/dark-v10"
                             mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
-                            onStyleLoad={(map) => map.resize()}
+                            onStyleLoad={(map) => { map.resize() }}
+                        
                         >
+
                             <NavigationControl showZoom={true} showCompass={false} />
                             <GeolocateControl
-                            fitBoundsOptions={{maxZoom: 8} }
+                                fitBoundsOptions={{ maxZoom: 8 }}
                             />
                             {/* Markers for location points */}
-                            
-                            <Marker
+
+                            {/* <Marker
                                 // latitude={props.userLatLong[0]} longitude={props.userLatLong[1]}
                                 latitude={hoodRiverLatLong[0]}
                                 longitude={hoodRiverLatLong[1]}
@@ -218,6 +229,7 @@ function Mapping() {
                                 scale={0.5}
                                 anchor="bottom"
                             />
+
                             <Marker
                                 // latitude={props.userLatLong[0]} longitude={props.userLatLong[1]}
                                 latitude={coconinoLatLong[0]}
@@ -225,13 +237,13 @@ function Mapping() {
                                 key="coconino"
                                 scale={0.5}
                                 anchor="bottom"
-                            />
-                           
+                            /> */}
+
                             {sortedFireData.map((element) => {
-                                
+
                                 return (
                                     <MarkerMult
-                                        key = {element.attributes.OBJECTID}
+                                        key={element.attributes.OBJECTID}
                                         element={element}
                                         setFooterText={setFooterText}
                                     />

@@ -3,7 +3,7 @@ import './App.css';
 import React from 'react';
 import Mapping from './components/Mapping'
 import HeaderElt from './components/HeaderElt'
-import Footer from './components/FooterElt'
+
 
 function App() {
 
@@ -14,13 +14,7 @@ function App() {
         <HeaderElt />
       </header>
 
-      
-      <Mapping 
-      />
-     
-
-      
-
+      <Mapping/> 
     </div>
   );
 }

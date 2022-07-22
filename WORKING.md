@@ -450,4 +450,8 @@ Want to have new lat long show location
 
 
 
-
+Funny instances of sheer idiocy:
+- 22k feature requestsvs 2k cap
+- Lat vs long misplacement
+- Lat long string-type conversion (45.878778871.5)
+- Workarounds for not being able to self-reference

@@ -61,7 +61,9 @@ function Mapping() {
         fetch(url)
             .then((result) => { return result.json() })
             .then((data) => {
-                setFireData(data.features)
+                setFireData((data.features).filter(element =>
+                    (element.attributes.DiscoveryAcres != null || element.attributes.DiscoveryAcres != null || element.attributes.CalculatedAcres != null)
+                ))
 
                 //I leave this in here as a reminder for future expansion.
                 // setFireData((data.features).filter(element =>
@@ -70,6 +72,7 @@ function Mapping() {
                 //     || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
                 // ))
 
+                
             })
             .catch((err) => console.log(err))
     }
@@ -125,8 +128,7 @@ function Mapping() {
 
     //chains after we get userlocation to get our data, but also if we submit a lat/long through page form.
     useEffect(() => {
-        console.log("userLatLong changed")
-        console.log(userLatLong)
+ 
         if (!userLatLong) {
         }
         else {

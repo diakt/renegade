@@ -15,7 +15,7 @@ function Mapping() {
     const [userLatLong, setUserLatLong] = useState([]);
     const [fireData, setFireData] = useState([])
     const [sortedFireData, setSortedFireData] = useState([])
-    const [footerText, setFooterText] = useState("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.")
+    const [footerText, setFooterText] = useState("Select a fire to see more.")
 
     
 
@@ -102,39 +102,41 @@ function Mapping() {
             latitude: userLatLong[0], //userLatLong[0]
             longitude: userLatLong[1] //userLatLong[1]
         }
-        const sortedFireData = [];
+        const sortedFireData = fireData;
         let difference = null;
-        fireData.forEach((element) => {
+        sortedFireData.forEach((element) => {
 
             difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
             element['difference'] = difference
-            if (element.attributes.CalculatedAcres == null) {
+            if (element.attributes.DailyAcres == null ) {
                 element['sizeColor'] = "grey"
             }
-            else if (element.attributes.CalculatedAcres > 0 && element.attributes.CalculatedAcres < 10) {
-                element['sizeColor'] = "pink"
-            }
-            else if (element.attributes.CalculatedAcres > 10 && element.attributes.CalculatedAcres < 100) {
+            else if (element.attributes.DailyAcres > 0 && element.attributes.DailyAcres < 10) {
                 element['sizeColor'] = "green"
             }
-            else if (element.attributes.CalculatedAcres > 100 && element.attributes.CalculatedAcres < 1000) {
+            else if (element.attributes.DailyAcres > 10 && element.attributes.DailyAcres < 100) {
+                element['sizeColor'] = "blue"
+            }
+            else if (element.attributes.DailyAcres > 100 && element.attributes.DailyAcres < 1000) {
                 element['sizeColor'] = "yellow"
             }
-            else if (element.attributes.CalculatedAcres > 1000 && element.attributes.CalculatedAcres < 10000) {
+            else if (element.attributes.DailyAcres > 1000 && element.attributes.DailyAcres < 10000) {
                 element['sizeColor'] = "orange"
             }
-            else if (element.attributes.CalculatedAcres > 10000 && element.attributes.CalculatedAcres < 100000) {
+            else if (element.attributes.DailyAcres > 10000 && element.attributes.DailyAcres < 100000) {
                 element['sizeColor'] = "red"
             }
-            if (element.attributes.IncidentName === "Turkey Hills") {
+
+            if (element.attributes.OrganizationalAssessment != null){
                 element['sizeColor'] = "purple"
-                console.log(element)
             }
+            
 
 
-            sortedFireData.push(element)
+            
         })
         sortedFireData.sort((e1, e2) => e1.difference - e2.difference)
+        console.log(sortedFireData)
         setSortedFireData(sortedFireData)
     }
 

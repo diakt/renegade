@@ -443,3 +443,11 @@ Accessibility
 
 
 Some fires hide, much ado about nothing
+
+
+At 6PM:
+Want to have new lat long show location
+
+
+
+

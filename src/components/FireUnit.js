@@ -7,6 +7,9 @@ function FireUnit(props) {
             <h4 className="fire-name"> {props.element.attributes.IncidentName + " Fire"}</h4>
             <ul className='fire-details'>
                 <li className='fire-detail'>Miles from fire: {props.element.difference.toFixed(0)} </li>
+                {(props.element.attributes.OrganizationalAssessment != null) &&
+                    <li className='fire-detail'>Threat Category: {props.element.attributes.OrganizationalAssessment} </li>
+                }
                 {(props.element.attributes.CalculatedAcres != null) &&
                     <li className='fire-detail'>Calculated Acres: {props.element.attributes.CalculatedAcres.toFixed(0)} </li>
                 }

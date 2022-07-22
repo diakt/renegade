@@ -17,8 +17,7 @@ function Mapping() {
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.")
 
-    //[45.73094827741738, -121.52561932578715])
-    //[35.27, -111.666])
+    
 
     
 
@@ -33,6 +32,7 @@ function Mapping() {
                 },
                 function () {
                     console.log("Browser had support but failed to retrieve");
+                    setFooterText("Waiting for user to enable location data. I assure you that I am not competent enough to abuse your privacy.");
                 })
         }
         else {

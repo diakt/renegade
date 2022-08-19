@@ -24,3 +24,4 @@ yarn-debug.log*
 yarn-error.log*
 
 /components/WORKING.md
+.vscode

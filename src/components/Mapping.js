@@ -138,9 +138,16 @@ function Mapping() {
     }, [userLatLong]);
 
 
+    const geolocateControlRef = React.useCallback((ref) => {
+        if (ref) {
+            // Activate as soon as the control is loaded
+            ref.trigger();
+        }
+    }, [userLatLong]);
+
     setTimeout(() => {
         orderFiresByDistance()
-    }, 100);
+    }, 10);
 
 
 
@@ -181,6 +188,7 @@ function Mapping() {
 
                             <NavigationControl showZoom={true} showCompass={false} />
                             <GeolocateControl
+                                ref={geolocateControlRef}
                                 fitBoundsOptions={{ maxZoom: 7 }}
                             />
                             

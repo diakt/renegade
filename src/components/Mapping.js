@@ -1,7 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import FireUnit from './FireUnit';
 import Map, {NavigationControl, GeolocateControl } from 'react-map-gl'
-
 import haversine from 'haversine';
 import MarkerMult from './MarkerMult'
 import FooterElt from './FooterElt';
@@ -175,7 +174,7 @@ function Mapping() {
                         <Map
                             // Styling was rather tricky working with a dependency array.
                             className="actual-map"
-                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
+                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 4 }}
                             trackUserLocation={true}
                             showAccuracyCircle={true}
                             showUserHeading={true}
@@ -191,7 +190,7 @@ function Mapping() {
                                 ref={geolocateControlRef}
                                 fitBoundsOptions={{ maxZoom: 7 }}
                             />
-                            
+
 
                             {sortedFireData.map((element) => {
 

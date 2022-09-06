@@ -1,8 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import FireUnit from './FireUnit';
-import Map, {NavigationControl, GeolocateControl } from 'react-map-gl'
+import Map, { NavigationControl, GeolocateControl, useMap, Marker } from 'react-map-gl'
 import haversine from 'haversine';
-import MarkerMult from './MarkerMult'
+
 import FooterElt from './FooterElt';
 import LocForm from './LocForm';
 
@@ -15,10 +15,11 @@ function Mapping() {
     const [fireData, setFireData] = useState([])
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Select a fire to see more.")
+    const [firstMove, setFirstMove] = useState(false);
+    const {current: map } = useMap()
 
-    
 
-    
+
 
 
     //functions
@@ -47,7 +48,7 @@ function Mapping() {
         const ymin = Number(latitude) - Number(areaSizeParameter) / 2
         const xmax = Number(longitude) + Number(areaSizeParameter)
         const ymax = Number(latitude) + Number(areaSizeParameter) / 2
-        
+
         const finalURL = `https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/CY_WildlandFire_Locations_ToDate/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=%7Bxmin%3A+${xmin}%2C+ymin%3A+${ymin}%2C+xmax%3A+${xmax}%2C+ymax%3A+${ymax}%7D%0D%0A&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=`
         return finalURL
     }
@@ -71,7 +72,7 @@ function Mapping() {
                 //     || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
                 // ))
 
-                
+
             })
             .catch((err) => console.log(err))
     }
@@ -90,7 +91,7 @@ function Mapping() {
         sortedFireData.forEach((element) => {
             difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
             element['difference'] = difference
-            if (element.attributes.DailyAcres == null && element.attributes.DailyAcres == null ) {
+            if (element.attributes.DailyAcres == null && element.attributes.DailyAcres == null) {
                 element['sizeColor'] = "grey"
             }
             else if (element.attributes.DailyAcres > 0 && element.attributes.DailyAcres < 10) {
@@ -109,7 +110,7 @@ function Mapping() {
                 element['sizeColor'] = "red"
             }
 
-            if (element.attributes.OrganizationalAssessment != null){
+            if (element.attributes.OrganizationalAssessment != null) {
                 element['sizeColor'] = "purple"
             }
 
@@ -117,6 +118,13 @@ function Mapping() {
         sortedFireData.sort((e1, e2) => e1.difference - e2.difference)
         setSortedFireData(sortedFireData)
     }
+
+
+
+
+
+
+
 
     //side effects
     //fires on render of page, gets user location once
@@ -127,12 +135,13 @@ function Mapping() {
 
     //chains after we get userlocation to get our data, but also if we submit a lat/long through page form.
     useEffect(() => {
- 
+
         if (!userLatLong) {
         }
         else {
             setFooterText("Select a fire to see more.")
             getFireData(userLatLong[0], userLatLong[1])
+            setFirstMove(true)
         }
     }, [userLatLong]);
 
@@ -144,9 +153,32 @@ function Mapping() {
         }
     }, [userLatLong]);
 
+    //////////////////
+    // function NavigateButton() {
+    //     const {current: map} = useMap();
+
+    //     const onClick = () => {
+    //       map.flyTo({center: [-122.4, 37.8]});
+    //     };
+
+    //     return <button onClick={onClick}>Go</button>;
+    // }
+    // useEffect(() => {
+    //     if( firstMove !== false){
+    //         map.flyTo({center:[userLatLong]})
+    //     }
+
+    // }, [userLatLong]);
+    ////////////////
+
+
+
+
+
+
     setTimeout(() => {
         orderFiresByDistance()
-    }, 10);
+    }, 50);
 
 
 
@@ -174,7 +206,7 @@ function Mapping() {
                         <Map
                             // Styling was rather tricky working with a dependency array.
                             className="actual-map"
-                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 4 }}
+                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
                             trackUserLocation={true}
                             showAccuracyCircle={true}
                             showUserHeading={true}
@@ -182,7 +214,7 @@ function Mapping() {
                             mapStyle="mapbox://styles/mapbox/dark-v10"
                             mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
                             onStyleLoad={(map) => { map.resize() }}
-                        
+
                         >
 
                             <NavigationControl showZoom={true} showCompass={false} />
@@ -192,13 +224,26 @@ function Mapping() {
                             />
 
 
+
                             {sortedFireData.map((element) => {
 
                                 return (
-                                    <MarkerMult
+                                    <Marker
+                                        longitude={element.geometry.x}
+                                        latitude={element.geometry.y}
                                         key={element.attributes.OBJECTID}
-                                        element={element}
-                                        setFooterText={setFooterText}
+                                        color={element.sizeColor}
+                                        scale={0.5}
+                                        anchor="bottom"
+                                        onClick={(event) => {
+                                            console.log(element);
+                                            setFooterText(
+                                                "The fire you have selected is titled the " + element.attributes.IncidentName +
+                                                " Fire. It was discovered on " + new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString() +
+                                                ", approximately " + (element.difference).toFixed(0) + " miles from you."
+
+                                            )
+                                        }}
                                     />
                                 )
                             })}

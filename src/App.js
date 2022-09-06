@@ -1,6 +1,7 @@
 import './App.css';
-// import EONET from './components/EONET';
+import {Routes, Route} from 'react-router-dom';
 import React from 'react';
+import Dingo from './components/Dingo';
 import Mapping from './components/Mapping'
 import HeaderElt from './components/HeaderElt'
 
@@ -13,8 +14,11 @@ function App() {
       <header>
         <HeaderElt />
       </header>
+    <Routes>
+      <Route path="/" element={<Mapping />} />
+      <Route path="/dev/" element= {<Dingo/>} />
+    </Routes>
 
-      <Mapping/> 
     </div>
   );
 }

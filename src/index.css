@@ -1,3 +1,8 @@
+
+
+
+
+
 body {
   display: flex;
   flex-direction: column;
@@ -14,6 +19,22 @@ body {
   max-height: 100%;
 }
 
+.map-container {
+  height: 60vh;
+  width: 100vw;
+}
+.sidebar {
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  font-family: monospace;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 12px;
+  border-radius: 4px;
+}
 
 
 .App {
@@ -54,6 +75,7 @@ header {
 
 .site-title {
   margin: 0px;
+  margin-right: 1vw;
   /* margin-left: */
   padding: 0;
   /* border: black;
@@ -213,9 +235,19 @@ footer {
 
 
 
+/* ----------------------------------------------- */
+/* Dingo's CSS */
+/* ----------------------------------------------- */
 
 
-
+.map-container {
+  display: block;
+  max-width: 60vw;
+  min-height: 75vh;
+  margin-left: 0;
+  padding-left: 0;
+  
+}
 
 
 

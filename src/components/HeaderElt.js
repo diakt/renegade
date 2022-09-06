@@ -1,9 +1,11 @@
-import React from 'react';
+import React from 'react'; 
+import {Link} from 'react-router-dom';
 
 function HeaderElt(props) {
     return (
         <nav className='header-nav'>
-            <h1 className='site-title'>dangerous lighting</h1>
+            <Link to='/'> <h1 className='site-title'>dangerous lighting</h1> </Link>
+            <Link to='/dev'> <h1 className='site-title'>young lighting</h1> </Link>
         </nav>
     );
 }

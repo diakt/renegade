@@ -5,7 +5,6 @@ function HeaderElt(props) {
     return (
         <nav className='header-nav'>
             <Link to='/'> <h1 className='site-title'>dangerous lighting</h1> </Link>
-            <Link to='/dev'> <h1 className='site-title'>young lighting</h1> </Link>
         </nav>
     );
 }

@@ -1,13 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import FireUnit from './FireUnit';
-
 import haversine from 'haversine';
-
 import FooterElt from './FooterElt';
-import LocForm from './LocForm';
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2F2aW5zb3V0aGVybGFuZCIsImEiOiJjbDVraG1oeWIwYTExM2RsNmM0ZHd3ZWk0In0.UKmk4t4WUjMtjfbiTeeZZg';
-
 
 
 function Dingo() {
@@ -28,64 +24,7 @@ function Dingo() {
 
 
 
-  useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v10',
-      center: [lng, lat],
-      zoom: zoom,
-      key: process.env.REACT_APP_MAPBOX_KEY,
-      zoom: 3,
 
-      dragRotate: false,
-
-
-
-
-
-
-    });
-    map.current.addControl(
-      new mapboxgl.GeolocateControl({
-        maxZoom: 3,
-        positionOptions: {
-          enableHighAccuracy: true
-        },
-        trackUserLocation: true,
-        showUserHeading: true,
-      })
-
-    );
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    map.current.on('load', function () {
-      map.current.addSource('fires', {
-        'type': 'json',
-        'data': 'https://eonet.sci.gsfc.nasa.gov/api/v2.1/events?status=open&limit=1000&days=30&source=InciWeb&categories=Wildfires',
-      });
-      map.current.addLayer({
-        'id': 'fires',
-        'type': 'circle',
-        'source': 'fires',
-        'paint': {
-          'circle-radius': 4,
-          'circle-color': '#ff0000'
-        }
-      });
-    });
-
-  });
-
-
-  useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
-  });
 
   //functions
   function getuserLatLong() {
@@ -129,15 +68,6 @@ function Dingo() {
         setFireData((data.features).filter(element =>
           (element.attributes.DiscoveryAcres != null || element.attributes.DiscoveryAcres != null || element.attributes.CalculatedAcres != null)
         ))
-
-        //I leave this in here as a reminder for future expansion.
-        // setFireData((data.features).filter(element =>
-        //     ((element.attributes.CalculatedAcres != null))
-        //     || ((element.attributes.DailyAcres > 1 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1650553364000)
-        //     || ((element.attributes.DailyAcres > 5 || element.attributes.DiscoveryAcres > 0.1) && element.attributes.FireDiscoveryDateTime > 1647874964000)
-        // ))
-
-
       })
       .catch((err) => console.log(err))
   }
@@ -184,11 +114,120 @@ function Dingo() {
     setSortedFireData(sortedFireData)
   }
 
+  function addFireMarkers() {
+    //in this function, we add our markers to the map
+    for (let i = 0; i < sortedFireData.length; i++) {
+      const fire = sortedFireData[i]
+      const fireMarker = new mapboxgl.Marker({
+        color: fire.sizeColor,
+        size: "small",
+        draggable: false,
+        scale: 0.5,
+        anchor: "bottom"
+      })
+        .setLngLat([fire.geometry.x, fire.geometry.y])
+        .addTo(map.current)
+
+    }
+  }
+  function addFireLayer() {
+    //in this function, we add our fire layer to the map
+    map.current.addLayer({
+      'id': 'fireLayer',
+      'type': 'fill',
+      'source': {
+        'type': 'geojson',
+        'data': {
+          'type': 'FeatureCollection',
+          'features': sortedFireData
+        }
+      },
+      'layout': {},
+      'paint': {
+        'fill-color': '#ff0000',
+        'fill-opacity': 0.5
+      }
+    });
+  }
+
+  function addFireSymbolLayer() {
+    //in this function, we add our fire layer to the map
+
+    map.current.addLayer({
+      'id': 'fireSymbolLayer',
+      'type': 'circle',
+      'source': {
+        'type': 'geojson',
+        'data': {
+          'type': 'FeatureCollection',
+          'features': sortedFireData
+        }
+
+      },
+      'layout': {},
+      'paint': {
+        'circle-color': '#ff0000',
+        'circle-opacity': 0.5,
+        'circle-radius': 5
+      },
+      'visibility': 'visible'
+    });
+
+  }
 
 
 
 
 
+
+
+
+
+
+
+
+  //useEffect hooks to run functions on page load and when data changes 
+
+
+  useEffect(() => {
+    if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/dark-v10',
+      center: [lng, lat],
+      zoom: zoom,
+      key: process.env.REACT_APP_MAPBOX_KEY,
+      zoom: 3,
+
+    });
+    map.current.addControl(
+
+      new mapboxgl.GeolocateControl({
+        //this feature is for controlling zoom
+        fitBoundsOptions: { maxZoom: 8 },
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true,
+      })
+
+    );
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+
+
+  });
+
+
+  useEffect(() => {
+    if (!map.current) return; // wait for map to initialize
+    map.current.on('move', () => {
+      setLng(map.current.getCenter().lng.toFixed(4));
+      setLat(map.current.getCenter().lat.toFixed(4));
+      setZoom(map.current.getZoom().toFixed(2));
+    });
+  });
 
 
   //side effects
@@ -211,20 +250,20 @@ function Dingo() {
   }, [userLatLong]);
 
 
-  const geolocateControlRef = React.useCallback((ref) => {
-    if (ref) {
-      // Activate as soon as the control is loaded
-      ref.trigger();
-    }
-  }, [userLatLong]);
-
 
   setTimeout(() => {
     orderFiresByDistance()
-    console.log("sorted")
+
   }, 50);
 
-  
+  setTimeout(() => {
+    addFireMarkers()
+    // addFireLayer()
+    // addFireSymbolLayer()
+
+  }, 2000);
+
+
 
   return (
     <div>
@@ -232,13 +271,13 @@ function Dingo() {
         <div className='fires-container'>
           <div className='left-box'>
             <div className="activelatlong">
-             
+
             </div>
             <section className='latlong-in-leftbar'>
               <h3 className="fire-header">Current location:</h3>
               <p>Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}</p>
             </section>
-            
+
             <h3 className="left-section-title"> Local fires:</h3>
             {sortedFireData.map((element) => {
               return (
@@ -254,6 +293,7 @@ function Dingo() {
 
             <div ref={mapContainer} className="map-container" />
           </div>
+
         </div>
 
       </main >

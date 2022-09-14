@@ -1,10 +1,11 @@
+//relevant imports
 import React, { useState, useEffect } from 'react';
-import FireUnit from './FireUnit';
-import Map, { NavigationControl, GeolocateControl, useMap, Marker } from 'react-map-gl'
+import Map, { NavigationControl, GeolocateControl, useMap, Marker, MapProvider } from 'react-map-gl'
 import haversine from 'haversine';
-
+//function components
+import DispLatLong from './DispLatLong';
+import FireUnit from './FireUnit';
 import FooterElt from './FooterElt';
-import LocForm from './LocForm';
 
 
 
@@ -16,7 +17,7 @@ function Mapping() {
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Select a fire to see more.")
     const [firstMove, setFirstMove] = useState(false);
-    const {current: map } = useMap()
+    const { mymap } = useMap()
 
 
 
@@ -141,7 +142,9 @@ function Mapping() {
         else {
             setFooterText("Select a fire to see more.")
             getFireData(userLatLong[0], userLatLong[1])
-            setFirstMove(true)
+
+
+
         }
     }, [userLatLong]);
 
@@ -151,25 +154,12 @@ function Mapping() {
             // Activate as soon as the control is loaded
             ref.trigger();
         }
+        setFirstMove(true)
     }, [userLatLong]);
 
-    //////////////////
-    // function NavigateButton() {
-    //     const {current: map} = useMap();
 
-    //     const onClick = () => {
-    //       map.flyTo({center: [-122.4, 37.8]});
-    //     };
 
-    //     return <button onClick={onClick}>Go</button>;
-    // }
-    // useEffect(() => {
-    //     if( firstMove !== false){
-    //         map.flyTo({center:[userLatLong]})
-    //     }
 
-    // }, [userLatLong]);
-    ////////////////
 
 
 
@@ -184,76 +174,85 @@ function Mapping() {
 
     return (
         <div>
-            <main>
-                <div className='fires-container'>
-                    <div className='left-box'>
-                        <h3 className="left-section-title"> Set location:</h3>
-                        <LocForm
-                            setUserLatLong={setUserLatLong}
-                            setFireData={setFireData}
-                            setSortedFireData={setSortedFireData}
-                        />
-                        <h3 className="left-section-title"> Local fires:</h3>
-                        {sortedFireData.map((element) => {
-                            return (
-                                <FireUnit
-                                    key={element.attributes.OBJECTID}
-                                    element={element} />
-                            )
-                        })}
-                    </div>
-                    <div className='mapbox-container-map'>
-                        <Map
-                            // Styling was rather tricky working with a dependency array.
-                            className="actual-map"
-                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
-                            trackUserLocation={true}
-                            showAccuracyCircle={true}
-                            showUserHeading={true}
-                            style={{ position: 'relative', height: .75 * window.innerHeight }}
-                            mapStyle="mapbox://styles/mapbox/dark-v10"
-                            mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
-                            onStyleLoad={(map) => { map.resize() }}
+            <MapProvider>
+                <main>
+                    <div className='fires-container'>
+                        <div className='left-box'>
 
-                        >
+                            <DispLatLong spec_map={mymap} start={firstMove} />
 
-                            <NavigationControl showZoom={true} showCompass={false} />
-                            <GeolocateControl
-                                ref={geolocateControlRef}
-                                fitBoundsOptions={{ maxZoom: 7 }}
-                            />
-
-
+                            <h3 className="left-section-title"> Local fires:</h3>
+                            
 
                             {sortedFireData.map((element) => {
-
                                 return (
-                                    <Marker
-                                        longitude={element.geometry.x}
-                                        latitude={element.geometry.y}
+                                    <FireUnit
                                         key={element.attributes.OBJECTID}
-                                        color={element.sizeColor}
-                                        scale={0.5}
-                                        anchor="bottom"
-                                        onClick={(event) => {
-                                            console.log(element);
-                                            setFooterText(
-                                                "The fire you have selected is titled the " + element.attributes.IncidentName +
-                                                " Fire. It was discovered on " + new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString() +
-                                                ", approximately " + (element.difference).toFixed(0) + " miles from you."
-
-                                            )
-                                        }}
-                                    />
+                                        element={element} />
                                 )
                             })}
-                        </Map>
+                        </div>
+                        <div className='mapbox-container-map'>
+
+                            <Map
+                                // Styling was rather tricky working with a dependency array.
+
+                                className="actual-map"
+                                id="mymap"
+
+                                initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
+                                trackUserLocation={true}
+                                showAccuracyCircle={true}
+                                showUserHeading={true}
+                                style={{ position: 'relative', height: .75 * window.innerHeight }}
+                                mapStyle="mapbox://styles/mapbox/dark-v10"
+                                mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
+                                onLoad={(map) => { console.log(map, "map print on loading") }}
+
+
+                            >
+
+                                <NavigationControl showZoom={true} showCompass={false} />
+                                <GeolocateControl
+                                    ref={geolocateControlRef}
+                                    fitBoundsOptions={{ maxZoom: 7 }}
+
+                                />
+
+
+
+
+                                {sortedFireData.map((element) => {
+
+                                    return (
+                                        <Marker
+                                            longitude={element.geometry.x}
+                                            latitude={element.geometry.y}
+                                            key={element.attributes.OBJECTID}
+                                            color={element.sizeColor}
+                                            scale={0.5}
+                                            anchor="bottom"
+                                            onClick={(event) => {
+                                                console.log(element);
+                                                setFooterText(
+                                                    "The fire you have selected is titled the " + element.attributes.IncidentName +
+                                                    " Fire. It was discovered on " + new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString() +
+                                                    ", approximately " + (element.difference).toFixed(0) + " miles from you."
+
+                                                )
+                                            }}
+                                        />
+                                    )
+                                })}
+                            </Map>
+
+                        </div>
                     </div>
-                </div>
-            </main>
-            <footer>
-                <FooterElt footerText={footerText} />
-            </footer>
+                </main>
+                <footer>
+                    <FooterElt footerText={footerText} />
+                </footer>
+            </MapProvider>
         </div>
     );
 }

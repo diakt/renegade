@@ -4,7 +4,7 @@ import { useMap } from 'react-map-gl';
 
 
 
-export default function DispLatLong() {
+export default function DispLatLong({ newRender }) {
 
     const { mymap } = useMap();
     const [lat, setLat] = useState(37.0902);
@@ -21,6 +21,12 @@ export default function DispLatLong() {
         }
     };
 
+    const changeFiresDisplayed = () => {
+        console.log("changing fires displayed");
+        newRender([lat, lng])
+    }
+
+
 
     useEffect(() => {
         if (!mymap) return; // wait for map to initialize
@@ -29,7 +35,7 @@ export default function DispLatLong() {
             setLat(mymap.getCenter().lat.toFixed(4));
             setZoom(mymap.getZoom().toFixed(2));
         });
-        console.log('')
+        console.log(lat, lng, zoom)
     });
 
 
@@ -44,7 +50,7 @@ export default function DispLatLong() {
                 <li style={{listStyleType:"None"}} > Latitude: {lat}</li>
                 <li style={{listStyleType:"None"}} > Longitude: {lng}</li>
             </ul>
-            <button style={{marginTop:"1vh"}} onClick={onClick}>Render fires at location</button>
+            <button style={{marginTop:"1vh"}} onClick={changeFiresDisplayed}>Render fires at location</button>
         </div>
     )
 

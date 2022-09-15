@@ -17,7 +17,7 @@ function Mapping() {
     const [fireData, setFireData] = useState([])
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Select a fire to see more.")
-    const { mymap } = useMap()
+
 
 
 
@@ -79,45 +79,56 @@ function Mapping() {
     const orderFiresByDistance = () => {
         //in this function, we add some additional features to our elements in our fire data set
         //we also double store, but that is for a later intended functionality
+
+        // console.log("Within orderfiresbydistance")
+
+        // console.log("newLatLong is empty")
         const user_location = {
             latitude: userLatLong[0], //userLatLong[0]
             longitude: userLatLong[1] //userLatLong[1]
         }
-        const sortedFireData = fireData;
-        let difference = null;
+        // console.log("instantiated user location with user", user_location.latitude, user_location.longitude)
 
-        //note that the haversine function is a function to calculate distance across an oblate spheroid from two lat-long points
-        sortedFireData.forEach((element) => {
-            difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
-            element['difference'] = difference
-            if (element.attributes.DailyAcres == null && element.attributes.DailyAcres == null) {
-                element['sizeColor'] = "grey"
-            }
-            else if (element.attributes.DailyAcres > 0 && element.attributes.DailyAcres < 10) {
-                element['sizeColor'] = "green"
-            }
-            else if (element.attributes.DailyAcres > 10 && element.attributes.DailyAcres < 100) {
-                element['sizeColor'] = "blue"
-            }
-            else if (element.attributes.DailyAcres > 100 && element.attributes.DailyAcres < 1000) {
-                element['sizeColor'] = "yellow"
-            }
-            else if (element.attributes.DailyAcres > 1000 && element.attributes.DailyAcres < 10000) {
-                element['sizeColor'] = "orange"
-            }
-            else if (element.attributes.DailyAcres > 10000 && element.attributes.DailyAcres < 100000) {
-                element['sizeColor'] = "red"
-            }
-
-            if (element.attributes.OrganizationalAssessment != null) {
-                element['sizeColor'] = "purple"
-            }
-
-        })
-        sortedFireData.sort((e1, e2) => e1.difference - e2.difference)
-        setSortedFireData(sortedFireData)
+        if (newLatLong.length > 0) {
+            user_location.latitude = newLatLong[0]
+            user_location.longitude = newLatLong[1]
+            // console.log("Changed user location with new", user_location.latitude, user_location.longitude)
     }
 
+    const sortedFireData = fireData;
+    let difference = null;
+    // console.log("before the foreach loop, user_location is ", user_location.latitude, user_location.longitude)
+    //note that the haversine function is a function to calculate distance across an oblate spheroid from two lat-long points
+    sortedFireData.forEach((element) => {
+        difference = haversine(user_location, { latitude: element.geometry.y, longitude: element.geometry.x }, { unit: 'mile' })
+        element['difference'] = difference
+        if (element.attributes.DailyAcres == null && element.attributes.DailyAcres == null) {
+            element['sizeColor'] = "grey"
+        }
+        else if (element.attributes.DailyAcres > 0 && element.attributes.DailyAcres < 10) {
+            element['sizeColor'] = "green"
+        }
+        else if (element.attributes.DailyAcres > 10 && element.attributes.DailyAcres < 100) {
+            element['sizeColor'] = "blue"
+        }
+        else if (element.attributes.DailyAcres > 100 && element.attributes.DailyAcres < 1000) {
+            element['sizeColor'] = "yellow"
+        }
+        else if (element.attributes.DailyAcres > 1000 && element.attributes.DailyAcres < 10000) {
+            element['sizeColor'] = "orange"
+        }
+        else if (element.attributes.DailyAcres > 10000 && element.attributes.DailyAcres < 100000) {
+            element['sizeColor'] = "red"
+        }
+
+        if (element.attributes.OrganizationalAssessment != null) {
+            element['sizeColor'] = "purple"
+        }
+
+    })
+    sortedFireData.sort((e1, e2) => e1.difference - e2.difference)
+    setSortedFireData(sortedFireData)
+}
 
 
 
@@ -125,35 +136,57 @@ function Mapping() {
 
 
 
-    //side effects
-    //fires on render of page, gets user location once
-    useEffect(() => {
-        getuserLatLong()
 
-    }, []);
+//side effects
+//fires on render of page, gets user location once
+useEffect(() => {
+    getuserLatLong()
 
-    //chains after we get userlocation to get our data, but also if we submit a lat/long through page form.
-    useEffect(() => {
+}, []);
 
-        if (!userLatLong) {
+//chains after we get userlocation to get our data, but also if we submit a lat/long through page form.
+useEffect(() => {
+    // console.log('In getFireData useEffect')
+    if (!userLatLong) {
+    }
+    else {
+        if (newLatLong.length === 0) {
+            setFooterText("Select a fire to see more.")
+            getFireData(userLatLong[0], userLatLong[1])
         }
         else {
             setFooterText("Select a fire to see more.")
-            getFireData(userLatLong[0], userLatLong[1])
-
-
-
-        }
-    }, [userLatLong]);
-
-
-    const geolocateControlRef = React.useCallback((ref) => {
-        if (ref) {
-            // Activate as soon as the control is loaded
-            ref.trigger();
+            getFireData(newLatLong[0], newLatLong[1])
         }
 
-    }, [userLatLong]);
+
+    }
+}, [userLatLong, newLatLong]);
+
+
+const geolocateControlRef = React.useCallback((ref) => {
+    if (ref) {
+        // Activate as soon as the control is loaded
+        ref.trigger();
+    }
+
+}, [userLatLong]);
+
+
+setTimeout(() => {
+    orderFiresByDistance()
+}, 50);
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//new map stuff for newlatlong
+
+useEffect(() => {
+    if (newLatLong.length > 0) {
+        // console.log("new lat long is here", newLatLong)
+    }
+}, [newLatLong])
 
 
 
@@ -164,84 +197,92 @@ function Mapping() {
 
 
 
-    setTimeout(() => {
-        orderFiresByDistance()
-    }, 50);
 
 
 
-    return (
-        <div>
-            <MapProvider>
-                <main>
-                    <div className='fires-container'>
-                        <div className='left-box'>
 
-                            <DispLatLong />
+/////////////////////////////////////////////////////////////////////////
 
-                            <h2 className="left-section-title"> Local fires:</h2>
+
+
+
+
+
+
+
+return (
+    <div>
+        <MapProvider>
+            <main>
+                <div className='fires-container'>
+                    <div className='left-box'>
+
+                        <DispLatLong
+                            newRender={setNewLatLong} />
+
+                        <h2 className="left-section-title"> Local fires:</h2>
+                        {sortedFireData.map((element) => {
+                            return (
+                                <FireUnit
+                                    key={element.attributes.OBJECTID}
+                                    element={element} />
+                            )
+                        })}
+                    </div>
+                    <div className='mapbox-container-map'>
+
+                        <Map
+                            className="actual-map"
+                            id="mymap"
+                            initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
+                            trackUserLocation={true}
+                            showAccuracyCircle={true}
+                            showUserHeading={true}
+                            style={{ position: 'relative', height: .75 * window.innerHeight }}
+                            mapStyle="mapbox://styles/mapbox/dark-v10"
+                            mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
+                            // onLoad={(map) => { console.log(map, "map print on loading") }}
+                        >
+
+                            <NavigationControl showZoom={true} showCompass={false} />
+                            <GeolocateControl
+                                ref={geolocateControlRef}
+                                fitBoundsOptions={{ maxZoom: 7 }}
+
+                            />
+
                             {sortedFireData.map((element) => {
                                 return (
-                                    <FireUnit
+                                    <Marker
+                                        longitude={element.geometry.x}
+                                        latitude={element.geometry.y}
                                         key={element.attributes.OBJECTID}
-                                        element={element} />
+                                        color={element.sizeColor}
+                                        scale={0.5}
+                                        anchor="bottom"
+                                        onClick={(event) => {
+                                            // console.log(element);
+                                            setFooterText(
+                                                "The fire you have selected is titled the " + element.attributes.IncidentName +
+                                                " Fire. It was discovered on " + new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString() +
+                                                ", approximately " + (element.difference).toFixed(0) + " miles from you."
+
+                                            )
+                                        }}
+                                    />
                                 )
                             })}
-                        </div>
-                        <div className='mapbox-container-map'>
+                        </Map>
 
-                            <Map
-                                className="actual-map"
-                                id="mymap"
-                                initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
-                                trackUserLocation={true}
-                                showAccuracyCircle={true}
-                                showUserHeading={true}
-                                style={{ position: 'relative', height: .75 * window.innerHeight }}
-                                mapStyle="mapbox://styles/mapbox/dark-v10"
-                                mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
-                                onLoad={(map) => { console.log(map, "map print on loading") }}
-                            >
-
-                                <NavigationControl showZoom={true} showCompass={false} />
-                                <GeolocateControl
-                                    ref={geolocateControlRef}
-                                    fitBoundsOptions={{ maxZoom: 7 }}
-
-                                />
-
-                                {sortedFireData.map((element) => {
-                                    return (
-                                        <Marker
-                                            longitude={element.geometry.x}
-                                            latitude={element.geometry.y}
-                                            key={element.attributes.OBJECTID}
-                                            color={element.sizeColor}
-                                            scale={0.5}
-                                            anchor="bottom"
-                                            onClick={(event) => {
-                                                console.log(element);
-                                                setFooterText(
-                                                    "The fire you have selected is titled the " + element.attributes.IncidentName +
-                                                    " Fire. It was discovered on " + new Date(element.attributes.FireDiscoveryDateTime).getMonth().toString() + '/' + new Date(element.attributes.FireDiscoveryDateTime).getDate().toString() +
-                                                    ", approximately " + (element.difference).toFixed(0) + " miles from you."
-
-                                                )
-                                            }}
-                                        />
-                                    )
-                                })}
-                            </Map>
-
-                        </div>
                     </div>
-                </main>
-                <footer>
-                    <FooterElt footerText={footerText} />
-                </footer>
-            </MapProvider>
-        </div>
-    );
+                </div>
+            </main>
+            <footer>
+                <FooterElt footerText={footerText} />
+            </footer>
+        </MapProvider>
+    </div>
+);
 }
 
 export default Mapping;

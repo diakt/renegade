@@ -13,13 +13,11 @@ function Mapping() {
 
     //states
     const [userLatLong, setUserLatLong] = useState([]);
+    const [newLatLong, setNewLatLong] = useState([]);
     const [fireData, setFireData] = useState([])
     const [sortedFireData, setSortedFireData] = useState([])
     const [footerText, setFooterText] = useState("Select a fire to see more.")
-    const [firstMove, setFirstMove] = useState(false);
     const { mymap } = useMap()
-
-
 
 
 
@@ -154,7 +152,7 @@ function Mapping() {
             // Activate as soon as the control is loaded
             ref.trigger();
         }
-        setFirstMove(true)
+
     }, [userLatLong]);
 
 
@@ -179,11 +177,9 @@ function Mapping() {
                     <div className='fires-container'>
                         <div className='left-box'>
 
-                            <DispLatLong spec_map={mymap} start={firstMove} />
+                            <DispLatLong />
 
-                            <h3 className="left-section-title"> Local fires:</h3>
-                            
-
+                            <h2 className="left-section-title"> Local fires:</h2>
                             {sortedFireData.map((element) => {
                                 return (
                                     <FireUnit
@@ -195,11 +191,8 @@ function Mapping() {
                         <div className='mapbox-container-map'>
 
                             <Map
-                                // Styling was rather tricky working with a dependency array.
-
                                 className="actual-map"
                                 id="mymap"
-
                                 initialViewState={{ latitude: 37.0902, longitude: -95.7129, zoom: 3 }}
                                 trackUserLocation={true}
                                 showAccuracyCircle={true}
@@ -208,8 +201,6 @@ function Mapping() {
                                 mapStyle="mapbox://styles/mapbox/dark-v10"
                                 mapboxAccessToken={process.env.REACT_APP_MAPBOX_KEY}
                                 onLoad={(map) => { console.log(map, "map print on loading") }}
-
-
                             >
 
                                 <NavigationControl showZoom={true} showCompass={false} />
@@ -219,11 +210,7 @@ function Mapping() {
 
                                 />
 
-
-
-
                                 {sortedFireData.map((element) => {
-
                                     return (
                                         <Marker
                                             longitude={element.geometry.x}

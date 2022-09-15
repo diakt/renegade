@@ -1,10 +1,10 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useMap } from 'react-map-gl';
-import DingoButton from './DingoButton';
 
 
-export default function DispLatLong({ spec_map, started }) {
+
+export default function DispLatLong() {
 
     const { mymap } = useMap();
     const [lat, setLat] = useState(37.0902);
@@ -29,6 +29,7 @@ export default function DispLatLong({ spec_map, started }) {
             setLat(mymap.getCenter().lat.toFixed(4));
             setZoom(mymap.getZoom().toFixed(2));
         });
+        console.log('')
     });
 
 
@@ -46,7 +47,7 @@ export default function DispLatLong({ spec_map, started }) {
             <button style={{marginTop:"1vh"}} onClick={onClick}>Render fires at location</button>
         </div>
     )
-        //border:"3px red", borderStyle: "dashed",
+
 
 
 }
